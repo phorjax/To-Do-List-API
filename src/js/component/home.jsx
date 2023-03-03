@@ -42,7 +42,7 @@ const Home = () => {
 
 					))}
 			</ul>
-			
+			<div><p>{todo.length} tasks</p></div>
 
 
 		</div>

@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import FetchAPI from "./FetchAPI.jsx";
 
 //include images into your bundle
 
@@ -44,7 +45,7 @@ const Home = () => {
 			</ul>
 			<div><p>{todo.length} tasks</p></div>
 
-
+			<div><FetchAPI /></div>
 		</div>
 	);
 };

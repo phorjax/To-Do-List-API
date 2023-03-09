@@ -8,34 +8,50 @@ const Home = () => {
   const [todo, setTodo] = useState([]);
 
   let apiUrl = "https://assets.breatheco.de/apis/fake/todos/user/phorjax";
-  const apiGet = () => {
+
+  const updateFetch = (newList) => {
+    fetch(apiUrl, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newList),
+    })
+      .then((resp) => resp.json())
+      .catch((error) => console.log(error));
+  };
+
+  const getFetch = () => {
     fetch(apiUrl)
       .then((resp) => resp.json())
       .then((data) => setTodo(data))
       .catch((error) => console.log(error));
-  }
+  };
 
   useEffect(() => {
-    apiGet();
+    getFetch();
   }, []);
 
- function clearAllTasks() {
-	let newTodo =   {
-        label: "sample task",
-        done: false
-    };	
-	fetch(apiUrl,
-		{
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-			body: JSON.stringify(newTodo)
-        }
-    )
-	.then((resp) => console.log( resp.json()))
-	.then(()=>setTodo([]))
-	.catch((error) =>console.log(error))
+  const addTodo = (e) => {
+    if (e.key === "Enter" && inputValue !== "") {
+      let newList = todo.concat([{ label: inputValue, done: false }]);
+      setTodo(newList);
+      updateFetch(newList);
+      setInputValue("");
+    }
+  };
+
+  const clearAllTasks =()=> {
+    let sampleList = [{
+      "label": "sample task",
+      "done": false,
+    }]
+    setTodo(sampleList)
+    updateFetch(sampleList);
+  }
+
+  const deleteTodo = (index) => {
+    let newList= todo.filter((item, currentIndex) => index != currentIndex)
+    setTodo(newList);
+    updateFetch(newList);
   }
 
   return (
@@ -48,12 +64,7 @@ const Home = () => {
             type="text"
             onChange={(e) => setInputValue(e.target.value)}
             value={inputValue}
-            onKeyUp={(e) => {
-              if (e.key === "Enter") {
-                setTodo(todo.concat([inputValue]));
-                setInputValue("");
-              }
-            }}
+            onKeyUp={(e) => addTodo(e)}
             placeholder="add to the to do list"
           ></input>
         </li>
@@ -64,7 +75,7 @@ const Home = () => {
             <i
               class="fa-solid fa-trash-can"
               onClick={() =>
-                setTodo(todo.filter((t, currentIndex) => index != currentIndex))
+                deleteTodo(index)
               }
             ></i>
           </li>
@@ -75,7 +86,7 @@ const Home = () => {
       </div>
 
       <div>
-        <button onClick={()=>clearAllTasks()}> Clear all tasks</button>
+        <button onClick={() => clearAllTasks()}> Clear all tasks</button>
       </div>
     </div>
   );
